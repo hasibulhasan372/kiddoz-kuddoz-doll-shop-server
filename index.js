@@ -44,9 +44,14 @@ async function run() {
         const query = { _id: new ObjectId(id) };
         const result = await dollsCollection.findOne(query);
         res.send(result)
+    });
 
+    app.post("/dolls", async(req, res) =>{
+        const doll = req.body;
+        console.log(doll)
+        const result = await dollsCollection.insertOne(doll)
 
-    })
+    });
 
 
 
