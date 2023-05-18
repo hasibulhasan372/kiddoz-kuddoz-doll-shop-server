@@ -35,21 +35,28 @@ async function run() {
     const dollsCollection = client.db("dollDB").collection("dolls");
 
     app.get("/dolls", async(req, res) =>{
+        console.log(req.query.category)
         let query = {};
         if(req.query?.sellerEmail){
             query = {sellerEmail: req.query.sellerEmail}
+        }
+        else if(req.query?.category === "Disney Dolls" || req.query?.category === "American Girl" || req.query?.category === "Barbie Dolls"){
+            query = { category: req.query.category}
         }
         const result = await dollsCollection.find(query).toArray();
         res.send(result)
     });
 
     app.get("/dolls/:id", async(req, res) =>{
-
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
         const result = await dollsCollection.findOne(query);
         res.send(result)
     });
+
+    app.get("/dolls/:text", async(req, res) =>{
+       
+    })
 
     app.get("/dolls", async(req, res) =>{
         console.log(req.query.sellerEmail) 
