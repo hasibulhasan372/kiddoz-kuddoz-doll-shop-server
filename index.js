@@ -45,6 +45,17 @@ async function run() {
             const result = await dollsCollection.find(query).toArray();
             res.send(result)
         });
+         app.get("/dollsLimit", async (req, res) => {
+            let query = {};
+            if (req.query?.sellerEmail) {
+                query = { sellerEmail: req.query.sellerEmail }
+            }
+            else if (req.query?.category === "Disney Dolls" || req.query?.category === "American Girl" || req.query?.category === "Barbie Dolls") {
+                query = { category: req.query.category }
+            }
+            const result = await dollsCollection.find(query).limit(20).toArray();
+            res.send(result)
+        });
 
         app.get("/dolls/:id", async (req, res) => {
             const id = req.params.id;
@@ -57,7 +68,8 @@ async function run() {
         app.post("/dolls", async (req, res) => {
             const doll = req.body;
             console.log(doll)
-            const result = await dollsCollection.insertOne(doll)
+            const result = await dollsCollection.insertOne(doll);
+            res.send(result)
 
         });
 
