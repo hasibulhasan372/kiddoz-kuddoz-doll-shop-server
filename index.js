@@ -33,6 +33,7 @@ async function run() {
         client.connect();
 
         const dollsCollection = client.db("dollDB").collection("dolls");
+        const dollGalleryCollection = client.db("dollDB").collection("dollGallery");
 
         app.get("/dolls", async (req, res) => {
             let query = {};
@@ -99,6 +100,12 @@ async function run() {
             res.send(result)
         })
 
+        // Doll Gallery Collection 
+
+        app.get("/dollGallery", async (req, res) =>{
+            const result = await dollGalleryCollection.find().toArray()
+            res.send(result)
+        })
 
 
 
