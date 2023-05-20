@@ -30,23 +30,29 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        client.connect();
+        // client.connect();
 
         const dollsCollection = client.db("dollDB").collection("dolls");
         const dollGalleryCollection = client.db("dollDB").collection("dollGallery");
 
+        // Dolls Collection Operation 
+
         app.get("/dolls", async (req, res) => {
             let query = {};
+            // Find the Data by Email 
             if (req.query?.sellerEmail) {
                 query = { sellerEmail: req.query.sellerEmail }
             }
+            // Find the Dat by Category 
             else if (req.query?.category === "Disney Dolls" || req.query?.category === "American Girl" || req.query?.category === "Barbie Dolls") {
                 query = { category: req.query.category }
             }
             const result = await dollsCollection.find(query).toArray();
             res.send(result)
         });
-         app.get("/dollsLimit", async (req, res) => {
+
+        // Get the Data by Limit 
+        app.get("/dollsLimit", async (req, res) => {
             let query = {};
             if (req.query?.sellerEmail) {
                 query = { sellerEmail: req.query.sellerEmail }
@@ -57,7 +63,25 @@ async function run() {
             const result = await dollsCollection.find(query).limit(20).toArray();
             res.send(result)
         });
+        // Find the Data by High and Low Price 
+        app.get("/lowPriceDolls", async (req, res) => {
+            let query = {};
+            if (req.query?.sellerEmail) {
+                query = { sellerEmail: req.query.sellerEmail }
+            }
+            const result = await dollsCollection.find(query).sort({ price: 1 }).toArray();
+            res.send(result)
+        })
+        app.get("/highPriceDolls", async (req, res) => {
+            let query = {};
+            if (req.query?.sellerEmail) {
+                query = { sellerEmail: req.query.sellerEmail }
+            }
+            const result = await dollsCollection.find(query).sort({ price: -1 }).toArray();
+            res.send(result)
+        })
 
+        // Get the Doll By Id 
         app.get("/dolls/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
@@ -65,7 +89,14 @@ async function run() {
             res.send(result)
         });
 
+         // Doll Gallery Collection Operation
 
+         app.get("/dollGallery", async (req, res) => {
+            const result = await dollGalleryCollection.find().toArray()
+            res.send(result)
+        });
+
+        // Post Operation 
         app.post("/dolls", async (req, res) => {
             const doll = req.body;
             console.log(doll)
@@ -74,25 +105,26 @@ async function run() {
 
         });
 
-        app.patch("/dolls/:id", async(req, res) =>{
+        // Patch Operation  
+        app.patch("/dolls/:id", async (req, res) => {
             const id = req.params.id;
             const doll = req.body;
-            const filter = { _id : new ObjectId(id)}
+            const filter = { _id: new ObjectId(id) }
             const updatedDoll = {
-                $set:{
+                $set: {
                     name: doll.name,
                     price: doll.price,
                     category: doll.category,
-                    sellerName : doll.sellerName,
-                    img : doll.img,
-                    quantity : doll.quantity
+                    sellerName: doll.sellerName,
+                    img: doll.img,
+                    quantity: doll.quantity
                 }
             }
             const result = await dollsCollection.updateOne(filter, updatedDoll)
             res.send(result)
         });
 
-
+        // Delete Operation 
         app.delete("/dolls/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
@@ -100,12 +132,7 @@ async function run() {
             res.send(result)
         })
 
-        // Doll Gallery Collection 
-
-        app.get("/dollGallery", async (req, res) =>{
-            const result = await dollGalleryCollection.find().toArray()
-            res.send(result)
-        })
+       
 
 
 
