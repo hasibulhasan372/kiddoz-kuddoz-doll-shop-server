@@ -34,6 +34,7 @@ async function run() {
 
         const dollsCollection = client.db("dollDB").collection("dolls");
         const dollGalleryCollection = client.db("dollDB").collection("dollGallery");
+        const customerFeedbackCollection = client.db("dollDB").collection("customerFeedback");
 
         // Dolls Collection Operation 
 
@@ -94,6 +95,12 @@ async function run() {
          app.get("/dollGallery", async (req, res) => {
             const result = await dollGalleryCollection.find().toArray()
             res.send(result)
+        }); 
+        // Customer Feedback Collection Operation
+
+         app.get("/customerFeedback", async (req, res) => {
+            const result = await customerFeedbackCollection.find().toArray()
+            res.send(result)
         });
 
         // Post Operation 
@@ -112,12 +119,9 @@ async function run() {
             const filter = { _id: new ObjectId(id) }
             const updatedDoll = {
                 $set: {
-                    name: doll.name,
                     price: doll.price,
-                    category: doll.category,
-                    sellerName: doll.sellerName,
-                    img: doll.img,
-                    quantity: doll.quantity
+                    quantity: doll.quantity,
+                    details: doll.details
                 }
             }
             const result = await dollsCollection.updateOne(filter, updatedDoll)
